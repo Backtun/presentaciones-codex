@@ -33,8 +33,15 @@
 </nav>
 <script>
 const slides=document.querySelectorAll('.slide');
-let index=0;slides.forEach((s,i)=>{gsap.set(s,{xPercent:100*i});});
-function goto(i){if(i<0||i>=slides.length)return;index=i;gsap.to(slides,{xPercent:-100*i,duration:0.8,stagger:0.02});updateNav();}
+let index=0;
+let animating=false;
+slides.forEach((s,i)=>{gsap.set(s,{xPercent:100*i});});
+function goto(i){
+  if(animating||i<0||i>=slides.length) return;
+  animating=true;
+  index=i;
+  gsap.to(slides,{xPercent:-100*i,duration:0.8,stagger:0.02,onComplete:()=>{animating=false;updateNav();}});
+}
 function updateNav(){document.getElementById('prev').disabled=index===0;document.getElementById('next').disabled=index===slides.length-1;}
 document.getElementById('next').onclick=()=>goto(index+1);document.getElementById('prev').onclick=()=>goto(index-1);
 updateNav();
